@@ -23,7 +23,7 @@
 <img id="clickable-image" class="center-horizontal" src="https://lh3.googleusercontent.com/d/12u9NJu44z9buy8xga0c8KohpA7DcZd3A?key=123" alt="Map" style="cursor: pointer;">
 
 <script>
-const liffId = " >>>>>>LIFF ID<<<<<<";
+const liffId = "2007656229-pz9ZXMyn";
 
 async function initializeLiff(liffId) {
     try {
