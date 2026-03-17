@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ลงทะเบียน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</head>
+
+<body class="bg-white flex justify-center items-center max-w-sm mx-auto ">
+    <div class="w-full p-10">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-2">
+            <div>
+                <p class="text-gray-700 text-xs">Welcome back</p>
+                <input type="text" class="input-field bg-white text-gray-800 text-xl font-bold"
+                    id="displayName" name="displayName" readonly>
+            </div>
+            <div class="flex justify-center items-center">
+                <img src="https://placehold.co/400x400?text=Profile" alt="Profile Image" id="profileImage"
+                    class="w-10 h-10 rounded-lg shadow-lg">
+            </div>
+        </div>
+
+        <form>
+            <div class="flex items-center space-x-2 mb-4">
+                <input type="text"
+                    class="input-field w-full bg-gray-200 p-2 text-center text-xs text-teal-600 rounded-md"
+                    id="userlineId" placeholder="lineId" name="userlineId">
+            </div>
+            <div class="flex justify-between">
+
+                <div class="mb-5 text-center">
+                    <div class="mx-auto w-16 h-16 rounded-lg bg-gray-100 shadow-inner">
+                        <img src="https://placehold.co/400x400?text=Profile" alt="Default Image" id="preview" class="h-16 w-16 object-cover rounded-md">
+                    </div>
+                </div>
+                <div class="mb-5 text-center">
+
+                    <label for="file"
+                        class="cursor-pointer inline-flex justify-between items-center py-2 px-4 rounded-lg shadow-sm text-left text-gray-700 bg-gray-300 hover:bg-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#000000" fill="none">
+                            <path d="M13 3.00231C12.5299 3 12.0307 3 11.5 3C7.02166 3 4.78249 3 3.39124 4.39124C2 5.78249 2 8.02166 2 12.5C2 16.9783 2 19.2175 3.39124 20.6088C4.78249 22 7.02166 22 11.5 22C15.9783 22 18.2175 22 19.6088 20.6088C20.9472 19.2703 20.998 17.147 20.9999 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            <path d="M2 14.1354C2.61902 14.0455 3.24484 14.0011 3.87171 14.0027C6.52365 13.9466 9.11064 14.7729 11.1711 16.3342C13.082 17.7821 14.4247 19.7749 15 22" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                            <path d="M21 16.8962C19.8246 16.3009 18.6088 15.9988 17.3862 16.0001C15.5345 15.9928 13.7015 16.6733 12 18" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                            <path d="M17 4.5C17.4915 3.9943 18.7998 2 19.5 2M22 4.5C21.5085 3.9943 20.2002 2 19.5 2M19.5 2V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        อัพโหลดรูป
+                        <input type="file" id="file" name="file" accept="image/*" class="hidden">
+                    </label>
+                    <div class="mx-auto w-48 text-gray-600 text-xs text-center mt-1">คลิกเพื่ออัพโหลดรูปของคุณ</div>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 mb-4">
+
+                <input type="text" class="input-field w-full bg-gray-200 p-2 text-md text-gray-800 rounded-md" id="nameId"
+                    placeholder="ชื่อ-สกุล" name="nameId" required>
+            </div>
+            <div class="flex items-center space-x-2 mb-4">
+
+                <input type="text" class="input-field w-full bg-gray-200 p-2 text-md text-gray-800 rounded-md"
+                    id="keynumberId" placeholder="เบอร์ติดต่อ" name="keynumberId" required>
+            </div>
+            <div class="flex items-center space-x-2 mb-6">
+
+                <input type="text" class="input-field w-full bg-gray-200 p-2 text-md text-gray-800 rounded-md"
+                    id="keynumber2Id" placeholder="เพิ่มเติม" name="keynumber2Id" required>
+            </div>
+            <button type="button" id="submitBtn"
+                class="bg-teal-500 text-center w-full text-white p-4 rounded-md shadow-md hover:bg-teal-600">บันทึกข้อมูล</button>
+    </div>
+    </form>
+    </div>
+    </div>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script>
+        // ลิ้งจาก ระบบสมาชิก
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxh6MnlWyyyk_zlppsPv8acuyckmCppUaFHuSbEGV2uCU3pHW-dYIpvWVAn12QuyHEW/exec';
+        // Liff ไอดีไล์เรียกใช้หน้าข้อมูลส่วนตัว
+        const LIFF_ID = '2006806033-yY52Xb0x'; // LIFF ID
+
+        // ฟังก์ชันเริ่มต้น LIFF SDK
+        window.onload = function () {
+             initializeLiff();
+        };
+
+        // ฟังก์ชันสำหรับเริ่มต้น LIFF SDK
+        async function initializeLiff() {
+            await liff.init({ liffId: `${LIFF_ID}` });
+
+            if (liff.isLoggedIn()) {
+                getUserProfile();
+            } else {
+                liff.login();
+            }
+        }
+
+        // ฟังก์ชันสำหรับดึงข้อมูลโปรไฟล์ของผู้ใช้
+        async function getUserProfile() {
+            try {
+                const profile = await liff.getProfile();
+                document.getElementById('userlineId').value = profile.userId;
+                document.getElementById('displayName').value = profile.displayName;
+                document.getElementById('profileImage').src = profile.pictureUrl;
+
+            } catch (error) {
+                console.error('เกิดข้อผิดพลาดในการดึงข้อมูลโปรไฟล์:', error);
+            }
+        }
+
+        
+        async function sendFlexMessage() {
+            const flexMessage = {
+                type: 'flex',
+                altText: 'ข้อมูลลงทะเบียน',
+                contents: {
+                    type: 'bubble',
+                    styles: {
+                        header: { backgroundColor: '#FFFFFF' },
+                        body: { backgroundColor: '#FFFFFF' },
+                        footer: { backgroundColor: '#FFFFFF' }
+                    },
+                    header: {
+                        type: 'box',
+                        layout: 'horizontal',
+                        contents: [
+                            {
+                                type: 'text',
+                                text: 'ข้อมูลลงทะเบียนสำเร็จ',
+                                weight: 'bold',
+                                size: 'md',
+                                color: '#000000',
+                                flex: 1
+                            }
+                        ]
+                    },
+                    body: {
+                        type: 'box',
+                        layout: 'vertical',
+                        contents: [
+                            // แถว "ชื่อ-สกุล"
+                            {
+                                type: 'box',
+                                layout: 'horizontal',
+                                margin: 'md',
+                                contents: [
+                                    {
+                                        type: 'image',
+                                        url: 'https://img.icons8.com/?size=100&id=zxB19VPoVLjK&format=png&color=000000', // ตัวอย่างไอคอน
+                                        size: 'xs',
+                                        aspectRatio: '1:1'
+                                    },
+                                    {
+                                        type: 'text',
+                                        text: 'ชื่อ-สกุล',
+                                        size: 'sm',
+                                        color: '#555555',
+                                        flex: 3,
+                                        gravity: 'center',
+                                        margin: 'md'
+                                    },
+                                    {
+                                        type: 'text',
+                                        text: document.getElementById('nameId').value,
+                                        size: 'sm',
+                                        color: '#111111',
+                                        align: 'end',
+                                        flex: 5,
+                                        gravity: 'center'
+                                    }
+                                ]
+                            },
+                            {
+                                type: 'separator',
+                                margin: 'md'
+                            },
+                            // แถว "เบอร์ติดต่อ"
+                            {
+                                type: 'box',
+                                layout: 'horizontal',
+                                margin: 'md',
+                                contents: [
+                                    {
+                                        type: 'image',
+                                        url: 'https://img.icons8.com/?size=100&id=60963&format=png&color=000000', // ตัวอย่างไอคอน
+                                        size: 'xs',
+                                        aspectRatio: '1:1'
+                                    },
+                                    {
+                                        type: 'text',
+                                        text: 'เบอร์ติดต่อ',
+                                        size: 'sm',
+                                        color: '#555555',
+                                        flex: 3,
+                                        gravity: 'center',
+                                        margin: 'md'
+                                    },
+                                    {
+                                        type: 'text',
+                                        text: document.getElementById('keynumberId').value,
+                                        size: 'sm',
+                                        color: '#111111',
+                                        align: 'end',
+                                        flex: 5,
+                                        gravity: 'center'
+                                    }
+                                ]
+                            },
+                            {
+                                type: 'separator',
+                                margin: 'md'
+                            },
+                            // แถว "เพิ่มเติม"
+                            {
+                                type: 'box',
+                                layout: 'horizontal',
+                                margin: 'md',
+                                contents: [
+                                    {
+                                        type: 'image',
+                                        url: 'https://img.icons8.com/?size=100&id=61873&format=png&color=000000', // ตัวอย่างไอคอน
+                                        size: 'xs',
+                                        aspectRatio: '1:1'
+                                    },
+                                    {
+                                        type: 'text',
+                                        text: 'เพิ่มเติม',
+                                        size: 'sm',
+                                        color: '#555555',
+                                        flex: 3,
+                                        gravity: 'center',
+                                        margin: 'md'
+                                    },
+                                    {
+                                        type: 'text',
+                                        text: document.getElementById('keynumber2Id').value,
+                                        size: 'sm',
+                                        color: '#111111',
+                                        align: 'end',
+                                        flex: 5,
+                                        gravity: 'center'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            };
+
+            await liff.sendMessages([flexMessage]);
+        }
+
+
+        let url = `${WEB_APP_URL}`;
+        let fileInput = document.getElementById("file");
+        let imgPreview = document.getElementById("preview");
+        let userlineIdInput = document.getElementById("userlineId");
+        let nameIdInput = document.getElementById("nameId");
+        let keynumberIdInput = document.getElementById("keynumberId");
+        let keynumber2IdInput = document.getElementById("keynumber2Id");
+        let submitBtn = document.getElementById("submitBtn");
+
+        // ฟังก์ชันสำหรับแปลงไฟล์เป็น Base64
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                let reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ฟังก์ชันสำหรับแสดงภาพตัวอย่าง
+        function previewImage() {
+            if (fileInput.files.length > 0) {
+                let file = fileInput.files[0];
+                let reader = new FileReader();
+
+                reader.onload = function (e) {
+                    imgPreview.src = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                imgPreview.src = "https://placehold.co/400x400?text=Profile";
+            }
+        }
+
+        // เพิ่ม event listener สำหรับการเปลี่ยนแปลงใน input file
+        fileInput.addEventListener('change', () => {
+            previewImage();
+        });
+
+        // ฟังก์ชันสำหรับตรวจสอบการกรอกข้อมูลในฟิลด์ที่จำเป็น
+        function validateForm() {
+            const userlineId = userlineIdInput.value.trim();
+            const nameId = nameIdInput.value.trim();
+            const keynumberId = keynumberIdInput.value.trim();
+            const keynumber2Id = keynumber2IdInput.value.trim();
+
+            if (userlineId === '' || nameId === '' || keynumberId === '' || keynumber2Id === '') {
+                return false;
+            }
+
+            return true;
+        }
+
+        // เพิ่ม event listener สำหรับปุ่มบันทึกข้อมูล
+        submitBtn.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            if (!validateForm()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'กรุณากรอกข้อมูลในช่องที่จำเป็น.',
+                });
+                return;
+            }
+
+            const isConfirmed = await showConfirmationDialog();
+
+            if (isConfirmed) {
+                submitBtn.disabled = true;
+
+                try {
+                    let obj;
+
+                    if (fileInput.files.length > 0) {
+                        let file = fileInput.files[0];
+                        let base64 = await getBase64(file);
+                        imgPreview.src = `data:${file.type};base64,${base64}`;
+
+                        obj = {
+                            base64: base64,
+                            type: file.type,
+                            name: file.name,
+                            userlineId: userlineIdInput.value,
+                            nameId: nameIdInput.value,
+                            keynumberId: keynumberIdInput.value,
+                            keynumber2Id: keynumber2IdInput.value
+                        };
+                    } else {
+                        let response = await fetch("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png");
+                        let blob = await response.blob();
+                        let base64 = await getBase64(blob);
+
+                        obj = {
+                            base64: base64,
+                            type: "image/png",
+                            name: "Avatar.png",
+                            userlineId: userlineIdInput.value,
+                            nameId: nameIdInput.value,
+                            keynumberId: keynumberIdInput.value,
+                            keynumber2Id: keynumber2IdInput.value
+                        };
+                    }
+
+                    Swal.fire({
+                        title: '<div class="text-md">กำลังบันทึก, รอสักครู่...</div>',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        html: '<div class="swal2-loading"></div>',
+                        onBeforeOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    let response = await fetch(url, {
+                        method: "POST",
+                        body: JSON.stringify(obj)
+                    });
+
+                    let data = await response.text();
+
+                    Swal.fire({
+                        title: 'สำเร็จ!',
+                        text: 'บันทึกข้อมูลของคุณเรียบร้อย!',
+                        icon: 'success',
+                        confirmButtonText: 'ปิด',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            liff.closeWindow();
+                        }
+                    });
+                    sendFlexMessage();
+                    console.log(data);
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'เกิดข้อผิดพลาดขณะส่งข้อมูล.',
+                    });
+
+                    console.error(error);
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            } else {
+                Swal.fire('Submission Canceled', 'ข้อมูลของคุณไม่ได้ถูกส่ง.', 'info');
+            }
+        });
+
+        // ฟังก์ชันสำหรับแสดงกล่องยืนยัน
+        async function showConfirmationDialog() {
+            const confirmation = await Swal.fire({
+                title: 'ยืนยันการส่งข้อมูล',
+                text: 'แน่ใจ ว่าคุณกำลังส่งข้อมูล?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'ใช่, ส่งข้อมูล!',
+                cancelButtonText: 'ไม่, ยกเลิก'
+            });
+
+            return confirmation.isConfirmed;
+        }
+    </script>
+</body>
+
+</html>
